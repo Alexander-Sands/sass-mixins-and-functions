@@ -1,0 +1,208 @@
+// Examples (For) 0001
+// ------------------------------------------
+%grid {
+  float: left;
+  padding: 10px;
+  background-color: #eee;
+  border: 1px solid #aaa;
+  text-align: center;
+  font-weight: bold;
+  font-family: Tahoma;
+}
+
+$grid_cols: 12;
+@for $i from 1 through $grid_cols {
+  .col-#{$i} {
+    @extend %grid;
+    // width: (100% / ($grid_cols / $i));
+    width: percentage($i / $grid_cols);
+  }
+}
+// ************************************************
+// Examples (Each) 0002
+// ------------------------------------------
+$names: "books" 20px red 18, "games" 30px green 18, "dvds" 20px blue;
+
+@each $class, $padding, $color, $font in $names {
+  .#{$class} {
+    padding: $padding;
+    font-size: if($font, $font + px, 16px);
+    border-bottom: 2px solid $color;
+    color: #444;
+  }
+}
+// ************************************************
+// Examples (Mixin) 0003
+// ------------------------------------------
+///
+/// Media Query Mixin For Help Only
+/// Demo Version Only For The Course
+///
+@mixin breakpoints($point) {
+  @if $point == Mobile {
+    @media (max-width: 767px) {
+      @content;
+    }
+	} @else if $point == maxSmall {
+		@media (max-width: 991px) {
+			@content;
+		}
+	} @else if $point == maxMedium {
+		@media (max-width: 1199px) {
+			@content;
+		}
+  } @else if $point == small {
+    @media (min-width: 768px) and (max-width: 991px) {
+      @content;
+    }
+  } @else if $point == medium {
+		@media (min-width: 992px) and (max-width: 1199px) {
+			@content;
+    }
+	} @else if $point == minSmall {
+		@media (min-width: 768px) {
+			@content;
+		}
+  } @else if $point == minMedium {
+    @media (min-width: 992px) {
+      @content;
+    }
+  } @else if $point == minLarge {
+    @media (min-width: 1200px) {
+      @content;
+    }
+  }
+}
+
+.media {
+  @include breakpoints(Mobile) {
+    font-size: 15px;
+  }
+  @include breakpoints(maxSmall) {
+    font-size: 18px;
+  }
+  @include breakpoints(maxMedium) {
+    font-size: 20px;
+  }
+  @include breakpoints(minLarge) {
+    font-size: 22px;
+  }
+}
+// ************************************************
+// Examples (Mixin) 0004
+// ------------------------------------------
+///
+/// Animation Mixin
+/// Auto Add Prefixes To Animation
+///
+@mixin keyFrame($animation-name) {
+  @-webkit-keyframes #{$animation-name} {
+    @content;
+  }
+  @-moz-keyframes #{$animation-name} {
+    @content;
+  }
+  @keyframes #{$animation-name} {
+    @content;
+  }
+}
+
+@include keyFrame(fade-in) {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+// ************************************************
+// Examples (Mixin) 0005
+// ------------------------------------------
+///
+/// Prefixes Mixin
+/// Auto Add Prefixes To Properties
+///
+@mixin prefixer($property, $value, $prefixes: ()) {
+  @each $prefixe in $prefixes {
+    #{"-" + $prefixe + "-" + $property}: $value;
+  }
+  #{$property}: $value;
+}
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+// ************************************************
+// Examples (Mixin) 0006
+// ------------------------------------------
+///
+/// Overlay Mixin
+/// Overlay Main Properties
+///
+@mixin overlay($color, $opacity) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color, $opacity);
+}
+.black-overlay {
+  @include overlay(black, 0.5);
+}
+// ************************************************
+// Examples (Mixin) 0007
+// ------------------------------------------
+@mixin arrow($position) {
+  content: "";
+  position: absolute;
+  border: 20px solid transparent;
+  @if $position == "top" {
+    top: -40px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    border-bottom-color: red;
+  } @else if $position == "right" {
+    right: -40px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    border-left-color: red;
+  } @else if $position == "bottom" {
+    bottom: -40px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    border-top-color: red;
+  } @else if $position == "left" {
+    left: -40px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    border-right-color: red;
+  } @else {
+    @error "This Direction #{$direction} Is Not Valid";
+  }
+}
+
+.element {
+  &:before {
+    @include arrow("top");
+  }
+}
+// ************************************************
+// Examples (Mixin) 0008
+// ------------------------------------------
+///
+/// Opacity Mixin
+///
+@mixin opacity($value) {
+  zoom: 1;
+  $opacity-ie: $value * 100;
+  filter: alpha(opacity = $opacity-ie);
+  opacity: $value;
+}
